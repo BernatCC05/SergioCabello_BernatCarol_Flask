@@ -1,15 +1,15 @@
-# Modul per gestionar participants
-
-# TODO: Afegir funcions per afegir, validar i desar participants
+import utils
 
 def afegir_participant(nom):
-    # TODO: Implementar validació i afegir el participant a la llista
-    pass
+    if utils.validar_nom(nom):
+        return True
+    return False
 
 def desar_participants_a_fitxer(participants, fitxer):
-    # TODO: Implementar lògica per desar la llista de participants
-    pass
+    with open(fitxer, 'w') as f:
+        for participant in participants:
+            f.write(participant + '\n')
 
 def carregar_participants_de_fitxer(fitxer):
-    # TODO: Implementar lògica per carregar participants des del fitxer
-    pass
+    with open(fitxer, 'r') as f:
+        return [line.strip() for line in f.readlines()]

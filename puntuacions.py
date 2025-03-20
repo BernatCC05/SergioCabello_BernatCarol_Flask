@@ -1,11 +1,8 @@
-# Modul per gestionar puntuacions
-
-# TODO: Afegir funcions per actualitzar puntuacions i generar rànquings
-
 def actualitzar_puntuacions(puntuacions, guanyador):
-    # TODO: Implementar lògica per actualitzar puntuacions
-    pass
+    if guanyador in puntuacions:
+        puntuacions[guanyador] += 1
+    else:
+        puntuacions[guanyador] = 1
 
 def calcular_ranquing(puntuacions):
-    # TODO: Implementar lògica per calcular el rànquing
-    pass
+    return sorted(puntuacions.items(), key=lambda x: x[1], reverse=True)

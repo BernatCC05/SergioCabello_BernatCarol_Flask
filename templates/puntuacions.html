@@ -5,6 +5,11 @@
 </head>
 <body>
     <h1>Puntuacions</h1>
-    <!-- TODO: Mostrar rànquing i puntuacions actuals -->
+    <ul>
+        {% for jugador, punts in ranking %}
+        <li>{{ jugador }}: {{ punts }} punts</li>
+        {% endfor %}
+    </ul>
+    <a href="/">Tornar a l'inici</a>
 </body>
 </html>

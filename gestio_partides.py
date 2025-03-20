@@ -1,15 +1,24 @@
-# Modul per gestionar partides
-
-# TODO: Afegir funcions per generar partides i avançar jornades
+import random
 
 def generar_partides(participants):
-    # TODO: Implementar lògica per generar partides automàtiques
-    pass
+    random.shuffle(participants)
+    return [(participants[i], participants[i+1]) for i in range(0, len(participants)-1, 2)]
 
 def desar_partides_a_fitxer(partides, fitxer):
-    # TODO: Implementar lògica per desar les partides
-    pass
+    with open(fitxer, 'w') as f:
+        for partida in partides:
+            f.write(f"{partida[0]} vs {partida[1]}\n")
 
 def carregar_partides_de_fitxer(fitxer):
-    # TODO: Implementar lògica per carregar les partides
-    pass
+    with open(fitxer, 'r') as f:
+        return [tuple(line.strip().split(' vs ')) for line in f.readlines()]
+    
+
+
+
+
+
+
+
+
+
