@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Calendari</title>
+</head>
+<body>
+    <h1>Calendari</h1>
+    <form method="POST" action="/filtrar_partides">
+        <input type="text" name="criteri" placeholder="Filtrar partides">
+        <button type="submit">Filtrar</button>
+    </form>
+    <ul>
+        {% for partida in calendari %}
+        <li>{{ partida[0] }} vs {{ partida[1] }}</li>
+        {% endfor %}
+    </ul>
+    <a href="/">Tornar a l'inici</a>
+</body>
+</html>

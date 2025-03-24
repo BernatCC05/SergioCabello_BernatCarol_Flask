@@ -1,0 +1,4 @@
+bernat:0
+diego:0
+sandro:0
+sergio:0

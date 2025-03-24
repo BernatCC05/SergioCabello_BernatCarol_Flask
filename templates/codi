@@ -1,0 +1,522 @@
+# Part 7: Validació d'entrada (Executar PRIMER)
+# -----------------------------------------------------------------------------
+import re  # Importem la llibreria 're' per treballar amb expressions regulars.
+
+def validar_nom_participant(nom):
+    """
+    Valida si un nom de participant és vàlid.
+
+    Args:
+        nom: El nom del participant a validar.
+
+    Returns:
+        True si el nom és vàlid, False en cas contrari.
+    """
+    pattern = r'^[A-Za-zÀ-ÖØ-öø-ÿ\s]+$'  # Definim el patró per noms vàlids (lletres i espais).
+    return re.fullmatch(pattern, nom.strip()) is not None  # Retorna True si el nom coincideix amb el patró.
+
+def crear_participants():
+    """
+    Crea una llista de participants vàlids.
+
+    Returns:
+        Una llista amb els noms dels participants.
+    """
+    participants = []  # Inicialitzem una llista buida per guardar els participants.
+    entrada_ok = False  # Variable per controlar si l'entrada del nombre de participants és correcta.
+
+    # Demanar nombre de participants
+    while not entrada_ok:
+        try:
+            num = int(input("Quants participants hi haurà al torneig? "))  # Demanem el nombre de participants.
+            if num > 0:  # Comprovem que el nombre sigui positiu.
+                if num % 2 == 0:  # Comprovem que el nombre sigui parell.
+                    if num & (num - 1) == 0:  # Comprovem que el nombre sigui una potència de 2.
+                        entrada_ok = True  # Si tot és correcte, marquem l'entrada com a vàlida.
+                    else:
+                        print("El nombre de participants ha de ser una potència de 2 per fer eliminatòries.")  # Missatge d'error si no és potència de 2.
+                else:
+                    print("Error: El nombre de participants ha de ser un nombre parell.")  # Missatge d'error si no és parell.
+            else:
+                print("Error: Introdueix un nombre positiu.")  # Missatge d'error si no és positiu.
+        except ValueError:
+            print("Error: Ha de ser un número enter.")  # Missatge d'error si no és un enter.
+
+    # Demanar noms
+    for i in range(num):  # Iterem per cada participant.
+        nom_ok = False  # Variable per controlar si el nom del participant és correcte.
+        while not nom_ok:
+            nom = input(f"Nom participant {i+1}: ").strip()  # Demanem el nom del participant.
+            if validar_nom_participant(nom):  # Validem el nom amb la funció 'validar_nom_participant'.
+                # Control noms repetits
+                if any(nom.lower() == p.lower() for p in participants):  # Comprovem si el nom ja existeix (sense tenir en compte majúscules/minúscules).
+                    inicial_ok = False  # Variable per controlar si la inicial del cognom és correcta.
+                    while not inicial_ok:
+                        inicial = input(f"Nom repetit '{nom}'. Inicial cognom: ").strip()  # Demanem la inicial del cognom.
+                        if validar_nom_participant(inicial) and len(inicial) == 1:  # Validem la inicial i comprovem que sigui només una lletra.
+                            nom += f" {inicial.upper()}."  # Afegim la inicial al nom.
+                            inicial_ok = True  # Marquem la inicial com a vàlida.
+                        else:
+                            print("Inicial no vàlida!")  # Missatge d'error si la inicial no és vàlida.
+                participants.append(nom)  # Afegim el nom a la llista de participants.
+                nom_ok = True  # Marquem el nom com a vàlid.
+            else:
+                print("Nom només pot contenir lletres i espais.")  # Missatge d'error si el nom no és vàlid.
+    return participants  # Retornem la llista de participants.
+
+# Execució Part7
+llista_participants = crear_participants()  # Cridem la funció 'crear_participants' per obtenir la llista de participants.
+print("Participants registrats:", llista_participants)  # Mostrem la llista de participants.
+
+# Part 2: (Executar 2n)
+# -----------------------------------------------------------------------------
+def inicialitzar_puntuacions(participants):
+  puntuacions = {}  # Creem un diccionari buit
+  for participant in participants:  # Iterem per cada participant
+      puntuacions[participant] = 0  # L'afegim al diccionari amb valor 0
+  return puntuacions # Retornem el diccionari fet
+
+# Main
+puntuacions = inicialitzar_puntuacions(llista_participants) # Cridem la funcion adjuntant la llista i guardant el resultat a la variable
+print(puntuacions) # Printa el diccionari
+
+# Part 3: (Executar 3r)
+# -----------------------------------------------------------------------------
+import random
+
+def generar_calendari_lliga(participants):
+    calendari = []  # Creem una llista per guardar les partides
+    for i in range(len(participants)):  # Iterem per cada participant
+        for j in range(i + 1, len(participants)):  # Combinem el participant amb tots els altres que no s'han emparellat encara
+            calendari.append((participants[i], participants[j]))  # Afegim la partida a la llista
+    return calendari  # Retornem la llista de partides
+
+def generar_calendari_eliminatories(participants):
+    rondes = []  # Llista per emmagatzemar les rondes de partides
+    actuals = participants  # Comencem amb la llista completa de participants
+
+    # Continuem fins que quedi només un guanyador
+    ronda = 1
+    while len(actuals) > 1:
+        ronda_partides = []  # Llista per emmagatzemar les partides d'aquesta ronda
+        if len(actuals) == 2:
+          for i in range(0, len(actuals), 2):  # Fem parelles de jugadors
+            ronda_partides.append((actuals[i], actuals[i + 1]))  # Afegim la partida a la ronda
+            rondes.append(f"Final: {ronda_partides}")  # Afegim la ronda al llistat de rondes
+        else:
+          for i in range(0, len(actuals), 2):  # Fem parelles de jugadors
+              ronda_partides.append((actuals[i], actuals[i + 1]))  # Afegim la partida a la ronda
+          rondes.append(f"Ronda {ronda}: {ronda_partides}")  # Afegim la ronda al llistat de rondes
+        # Simulem que els guanyadors passen a la següent ronda
+        actuals = ["Guanyador " + str(i + 1) for i in range(len(ronda_partides))]  # Generem noms ficticis de guanyadors
+        ronda += 1
+
+    return rondes  # Retornem les rondes
+
+
+# Exemple d'ús:
+random.shuffle(llista_participants) # Barregem els participants perque la ronda inicial sigui aleatoria
+# Generem el calendari de la lliga
+calendari_lliga = generar_calendari_lliga(llista_participants)
+print("\nCalendari Lliga:")
+print(calendari_lliga)
+
+# Generem el calendari de les eliminatòries
+calendari_eliminatories = generar_calendari_eliminatories(llista_participants)
+print("\nCalendari Eliminatòries:")
+for ronda in calendari_eliminatories:
+  print(ronda)
+  
+  # Part 4.1: Simular partides per jornades (Retocar per poder fer la part 8, executar 4t)
+# -----------------------------------------------------------------------------
+
+# Funció per reiniciar les puntuacions de tots els participants a 0.
+def reiniciar_puntuacions(participants):
+    # Crida la funció inicialitzar_puntuacions per crear un nou diccionari
+    # amb les puntuacions a 0 per a cada participant.
+    return inicialitzar_puntuacions(participants)
+
+# Funció per simular una jornada de la lliga.
+def simular_jornada(calendari, puntuacions, jornada):
+    # Mostra el número de la jornada.
+    print(f"\nJornada {jornada}:")
+
+    # Calcula el nombre de partides per jornada.
+    num_partidos_por_jornada = len(calendari) // (len(llista_participants) - 1)
+
+    # Determina l'índex de la primera i última partida de la jornada.
+    inici = (jornada - 1) * num_partidos_por_jornada
+    fi = jornada * num_partidos_por_jornada
+
+    # Obtiene la llista de partides per a la jornada actual.
+    partides_jornada = calendari[inici:fi]
+
+    # Itera per cada partida de la jornada.
+    for partida in partides_jornada:
+        entrada_correcta = False
+        # Bucle per assegurar que l'usuari introdueix un nom vàlid per el guanyador.
+        while not entrada_correcta:
+            # Mostra la partida actual.
+            print(f"Partida: {partida[0]} vs {partida[1]}")
+            # Demana a l'usuari que introdueixi el nom del guanyador.
+            guanyador = input("Qui ha guanyat (introdueix el nom): ").strip()
+            # Si el nom del guanyador és vàlid...
+            if guanyador in (partida[0], partida[1]):
+                # Afegeix 3 punts al guanyador al diccionari de puntuacions.
+                puntuacions[guanyador] += 3
+                # Marca l'entrada com a correcta per sortir del bucle.
+                entrada_correcta = True
+            # Si el nom del guanyador no és vàlid...
+            else:
+                # Mostra un missatge d'error i torna a demanar el nom.
+                print("Nom no vàlid. Torna a intentar.")
+
+    # Pregunta a l'usuari si vol veure la puntuació actualitzada.
+    mostrar_puntuacio_actualitzada = input("Vols veure la puntuació actualitzada? (s/n): ")
+    # Si l'usuari vol veure la puntuació...
+    if mostrar_puntuacio_actualitzada.lower() == 's':
+        # Mostra les puntuacions actualitzades de tots els participants.
+        print("\nPuntuacions actualitzades:")
+        for participant, puntuacio in puntuacions.items():
+            print(f"{participant}: {puntuacio} punts")
+    # Si la resposta no és vàlida
+    elif mostrar_puntuacio_actualitzada.lower() != 'n' and mostrar_puntuacio_actualitzada != 's':
+        print("Introdueix una opció valida (s/n).")
+
+    # Indica que la jornada ha acabat.
+    print(f"\nJornada {jornada} acabada.\n")
+    # Retorna el diccionari de puntuacions actualitzat.
+    return puntuacions
+
+
+# Simular les jornades de la lliga
+# Inicialitza la variable de la jornada a 1.
+jornada = 1
+# Calcula el total de jornades.
+total_jornades = len(calendari_lliga) // (len(llista_participants) - 1)
+
+# Reinicia les puntuacions abans de començar la simulació.
+puntuacions = reiniciar_puntuacions(llista_participants)
+
+# Bucle principal per simular totes les jornades.
+while jornada <= total_jornades:
+    # Simula la jornada actual i actualitza les puntuacions.
+    puntuacions = simular_jornada(calendari_lliga, puntuacions, jornada)
+    # Incrementa la variable de la jornada per passar a la següent.
+    jornada += 1
+    
+    
+    
+# Part 4.2: Simular eliminatòries (Retocar per poder fer la part 8, executar 5è)
+# -----------------------------------------------------------------------------
+
+def simular_eliminatories(participants_inicials, puntuacions, tipus_competicio, ronda_inicial=1):
+    """
+    Simula les eliminatòries d'una competició, permetent guardar l'estat.
+
+    Args:
+        participants_inicials: Llista de participants a la primera ronda.
+        puntuacions: Diccionari de puntuacions (no s'utilitza en eliminatòries).
+        tipus_competicio: Tipus de competició ("lliga" o "eliminatories").
+        ronda_inicial: Ronda des d'on començar la simulació (per defecte 1).
+
+    Returns:
+        El nom del guanyador final de la competició.
+    """
+    guanyadors = participants_inicials.copy()  # Copiem la llista per no modificar l'original
+    ronda = ronda_inicial  # Inicialitzem la ronda actual
+
+    # Bucle principal: continua fins que només quedi un guanyador
+    while len(guanyadors) > 1:
+        print(f"\nRonda {ronda}:")
+        nous_guanyadors = []  # Llista per emmagatzemar els guanyadors de la ronda actual
+
+        # Generar parelles de jugadors per a la ronda actual
+        for i in range(0, len(guanyadors), 2):
+            jugador1 = guanyadors[i]
+            jugador2 = guanyadors[i + 1]
+            print(f"  {jugador1} vs {jugador2}")  # Mostra la partida
+
+            # Demanar a l'usuari el guanyador de la partida
+            guanyador = input("    Qui és el guanyador: ").strip()
+            while guanyador not in (jugador1, jugador2):  # Validar l'entrada
+                print("Error: Introdueix un nom vàlid.")
+                guanyador = input("    Qui és el guanyador: ").strip()
+
+            nous_guanyadors.append(guanyador)  # Afegir el guanyador a la llista
+
+        # Preguntar si es vol guardar l'estat actual
+        guardar = input("Vols guardar l'estat actual? (s/n): ").lower()
+        if guardar == "s":
+            guardar_estat(nous_guanyadors, tipus_competicio, ronda)  # Crida a la funció per guardar
+
+        guanyadors = nous_guanyadors  # Actualitzar la llista de guanyadors per a la següent ronda
+        ronda += 1  # Incrementar el número de ronda
+
+    # Mostrar el guanyador final
+    print(f"\nGuanyador final: {guanyadors[0]}")
+    return guanyadors[0]  # Retornar el nom del guanyador
+
+# Main (no s'executa automàticament, caldria cridar la funció)
+# guanyador = simular_eliminatories(calendari_eliminatories, puntuacions)
+
+
+
+# Part 5: Generar el rànquing (Executar 6è)
+# -----------------------------------------------------------------------------
+
+# Funció per generar i mostrar el rànquing dels participants.
+def generar_ranquing(puntuacions):
+    """
+    Genera i mostra el rànquing dels participants ordenats per puntuació.
+
+    Args:
+        puntuacions: Un diccionari amb les puntuacions dels participants.
+    """
+
+    # Ordena els participants per puntuació en ordre descendent.
+    # Línia complexa: utilitza `sorted` amb una funció `lambda` per ordenar pel valor (puntuació) de cada element del diccionari.
+    # `reverse=True` fa que l'ordre sigui descendent (de més a menys puntuació).
+    ranquing = sorted(puntuacions.items(), key=lambda item: item[1], reverse=True)
+
+    # Mostra el rànquing amb la posició, el nom del participant i la seva puntuació.
+    print("\nRànquing:")
+    for posicio, (participant, puntuacio) in enumerate(ranquing, 1): # `enumerate` s'utilitza per obtenir la posició de cada element al rànquing.
+        print(f"{posicio}. {participant}: {puntuacio} punts")
+
+# Funció per preguntar a l'usuari si vol veure el rànquing després de cada jornada.
+def mostrar_ranquing_despres_jornada(puntuacions):
+    """
+    Mostra el rànquing després de cada jornada si l'usuari ho desitja.
+
+    Args:
+        puntuacions: Un diccionari amb les puntuacions dels participants.
+    """
+
+    # Bucle per assegurar que l'usuari introdueixi una resposta vàlida ("s" o "n").
+    resposta_correcte = "False"
+    while resposta_correcte == "False":
+        veure_ranquing = input("Vols veure el rànquing? (s/n): ").lower()
+        if veure_ranquing in ("s", "n"):
+            resposta_correcte = "True"
+        else:
+            print("Resposta invàlida. Introdueix 's' per sí o 'n' per no.")
+
+    # Si l'usuari vol veure el rànquing, crida la funció `generar_ranquing`.
+    if veure_ranquing == "s":
+        generar_ranquing(puntuacions)
+
+# Main: Crida la funció `mostrar_ranquing_despres_jornada` per iniciar el procés.
+mostrar_ranquing_despres_jornada(puntuacions)
+
+
+
+
+# Part 6: Opció de navegació entre jornades o rondes (Modificació per fer la part 8, executar 7è)
+# -----------------------------------------------------------------------------
+import os
+
+# Carregar i guardar el estat d'un torneig anterior si vol. - Part 8 -----------------------------------------
+def guardar_estat(dades, tipus_competicio, etapa):
+    """Guarda les dades segons el tipus de competició"""
+    fitxer = "lliga.txt" if tipus_competicio == "lliga" else "eliminatoria.txt"
+    try:
+        with open(fitxer, 'w', encoding='utf-8') as f:
+            f.write(f"{etapa}\n")  # Guardem l'etapa actual (jornada o ronda)
+            if tipus_competicio == "lliga":
+                # Dades és un diccionari de puntuacions
+                for jugador, punts in dades.items():
+                    f.write(f"{jugador},{punts}\n")
+            else:
+                # Dades és una llista de guanyadors
+                for jugador in dades:
+                    f.write(f"{jugador}\n")
+        print(f"Estat guardat correctament a {fitxer}!")
+    except Exception as e:
+        print(f"Error en guardar: {e}")
+
+# Funció carregar_estat modificada
+def carregar_estat(tipus_competicio):
+    """Carrega les dades des del fitxer segons el tipus de competició"""
+    fitxer = "lliga.txt" if tipus_competicio == "lliga" else "eliminatoria.txt"
+    dades = {} if tipus_competicio == "lliga" else []
+    etapa = 1  # Valor per defecte
+    if os.path.exists(fitxer):
+        try:
+            with open(fitxer, 'r', encoding='utf-8') as f:
+                linies = f.readlines()
+                if linies:
+                    etapa = int(linies[0].strip())
+                    if tipus_competicio == "lliga":
+                        # Carregar diccionari de puntuacions
+                        for linia in linies[1:]:
+                            parts = linia.strip().split(',')
+                            if len(parts) == 2:
+                                jugador, punts = parts
+                                dades[jugador] = int(punts)
+                    else:
+                        # Carregar llista de guanyadors
+                        dades = [linia.strip() for linia in linies[1:]]
+            print(f"Estat carregat correctament des de {fitxer}!")
+        except Exception as e:
+            print(f"Error en carregar: {e}")
+    else:
+        print(f"No s'ha trobat cap fitxer {fitxer}.")
+    return dades, etapa
+# Carregar i guardar el estat d'un torneig anterior si vol. - Part 8 -----------------------------------------
+
+
+
+# Funció principal per navegar entre jornades o rondes segons el tipus de competició.
+def navegar_jornades_o_rondes(calendari_lliga, calendari_eliminatories, puntuacions):
+
+    tipus_competicio = input("Introdueix el tipus de competició (lliga/eliminatories): ").lower()
+    """Gestiona la càrrega, execució i guardat de l'estat del torneig."""
+    carregar = input("Vols carregar l'estat d'un torneig anterior? (s/n): ").lower()
+    continuar = True
+    # Si el tipus de competició és "lliga"...
+    if tipus_competicio == "lliga":
+        if carregar == "s":
+            puntuacions, jornada_actual = carregar_estat(tipus_competicio) # Part 8: carregar l'estat en cas de lliga --------------------------
+        # Reiniciem les puntuacions per començar la lliga si no s'ha carregat les puntuacions.
+        elif carregar == "n":
+          puntuacions = inicialitzar_puntuacions(llista_participants)
+          # Inicialitzem la jornada actual a 1 si no s'ha carregat les puntuacions.
+          jornada_actual = 1
+        else:
+          print("Error: Opció no valida")
+          return
+        # Calculem el total de jornades basant-nos en el calendari i el nombre de participants.
+        total_jornades = len(calendari_lliga) // (len(llista_participants) - 1) # Línia complexa: Calcula el total de jornades dividint el nombre de partides al calendari pel nombre de partides per jornada.
+
+        # Bucle principal per iterar per les jornades.
+        while continuar and jornada_actual <= total_jornades:
+            # Simulem la jornada actual i actualitzem les puntuacions.
+            puntuacions = simular_jornada(calendari_lliga, puntuacions, jornada_actual)
+            # Mostrem el rànquing després de la jornada.
+            mostrar_ranquing_despres_jornada(puntuacions)
+
+            # Si no és la última jornada, preguntem si volen avançar.
+            if jornada_actual < total_jornades:
+                accio = input("Vols avançar a la següent jornada? (s/n): ").lower()
+                if accio == "s":
+                    jornada_actual += 1
+                else:
+                    continuar = False # Sortim del bucle si l'usuari no vol avançar.
+            else:
+                continuar = False # Sortim del bucle si és la última jornada.
+
+        print("Lliga finalitzada!")
+
+    # Si el tipus de competició és "eliminatories"...
+    elif tipus_competicio == "eliminatories":
+        if carregar == "s":
+          dades_carregades, ronda_actual = carregar_estat(tipus_competicio) # Part 8: Carregar l'estat en cas d'eliminatoria ------------------------
+          participants = dades_carregades  # Llista de guanyadors de l'última ronda guardada
+          ronda_actual += 1
+        elif carregar == "n":
+          participants = llista_participants
+          ronda_actual = 1
+        else:
+          print("Error: Opció no valida")
+          return
+        guanyador = simular_eliminatories(participants, puntuacions, tipus_competicio, ronda_actual)
+    # Si el tipus de competició no és vàlid...
+    else:
+        print("Tipus de competició no vàlid.")
+
+    guardar = input("Vols guardar l'estat actual del torneig? (s/n): ").lower()
+    if guardar == "s":
+        guardar_estat(puntuacions, tipus_competicio, jornada_actual) # Part 8: Guardar el estat al finalitzar el torneig ------------------------------
+
+# Main: Execució principal del programa.
+navegar_jornades_o_rondes(calendari_lliga, calendari_eliminatories, puntuacions)
+
+
+# Part 9: Llistar i filtrar partides per criteris
+# -----------------------------------------------------------------------------
+
+def filtrar_partides(calendari, criteri):
+    """
+    Filtra les partides del calendari segons un criteri de cerca.
+
+    Args:
+        calendari: Una llista de tuples, on cada tupla representa una partida (jugador1, jugador2).
+        criteri: Una cadena de text que representa el criteri de cerca (pot ser text o una expressió regular).
+
+    Returns:
+        Una llista de tuples que representen les partides que coincideixen amb el criteri.
+    """
+    partides_filtrades = []  # Inicialitza una llista buida per emmagatzemar les partides filtrades.
+    cerca_activa = True  # Inicialitza una variable per controlar si la cerca està activa.
+    try:
+        # Intenta compilar el criteri com una expressió regular (ignorant majúscules/minúscules).
+        regex = re.compile(criteri, re.IGNORECASE)
+        # Itera per cada partida al calendari.
+        for partida in calendari:
+            # Si la cerca està activa i el criteri coincideix amb algun dels jugadors de la partida...
+            if cerca_activa and (regex.search(partida[0]) or regex.search(partida[1])):
+                # Afegeix la partida a la llista de partides filtrades.
+                partides_filtrades.append(partida)
+        # Retorna la llista de partides filtrades.
+        return partides_filtrades
+    except re.error:
+        # Si hi ha un error en la compilació de l'expressió regular, mostra un missatge d'error.
+        print("Patró de cerca invàlid.")
+        # Retorna una llista buida.
+        return []
+
+def mostrar_partides(calendari):
+    """
+    Mostra les partides del calendari, permetent a l'usuari filtrar-les.
+
+    Args:
+        calendari: Una llista de tuples, on cada tupla representa una partida (jugador1, jugador2).
+    """
+    while True:
+        # Mostra les opcions de visualització a l'usuari.
+        print("\nOpcions de visualització de partides:")
+        print("1. Mostrar totes les partides")
+        print("2. Filtrar per criteris")
+        print("3. Tornar al menú principal")
+        # Demana a l'usuari que seleccioni una opció.
+        opcio = input("Selecciona una opció (1-3): ")
+
+        # Si l'usuari selecciona l'opció 1...
+        if opcio == '1':
+            # Mostra totes les partides del calendari.
+            print("\nTotes les partides:")
+            for i, jornada in enumerate(calendari, 1):  # Itera per cada jornada al calendari, utilitzant `enumerate` per obtenir l'índex.
+                print(f"Jornada {i}: {jornada}")  # Mostra la jornada i les partides corresponents.
+            return  # Surt de la funció.
+
+        # Si l'usuari selecciona l'opció 2...
+        elif opcio == '2':
+            # Demana a l'usuari que introdueixi el criteri de filtratge.
+            criteri = input("Introdueix el criteri de filtratge (text o regex): ")
+            try:
+                # Intenta filtrar les partides utilitzant la funció `filtrar_partides`.
+                partides = filtrar_partides(calendari, criteri)
+                # Mostra les partides que coincideixen amb el criteri.
+                print(f"\nPartides que coincideixen amb '{criteri}':")
+                for partida in partides:  # Itera per cada partida filtrada.
+                    print(f" - {partida[0]} vs {partida[1]}")  # Mostra la partida.
+            except re.error:
+                # Si hi ha un error en la compilació de l'expressió regular, mostra un missatge d'error.
+                print("Expressió regular no vàlida.")
+
+        # Si l'usuari selecciona l'opció 3...
+        elif opcio == '3':
+            return  # Surt de la funció.
+
+        # Si l'usuari introdueix una opció no vàlida...
+        else:
+            print("Opció no vàlida.")
+
+# Main (part principal del programa)
+# Demana a l'usuari que introdueixi un patró de cerca.
+criteri = input("Introdueix patró de cerca (ex: 'Anna'): ")
+# Filtra les partides del calendari `calendari_lliga` utilitzant la funció `filtrar_partides`.
+partides_filtrades = filtrar_partides(calendari_lliga, criteri)
+# Mostra les partides que coincideixen amb el patró de cerca.
+print("Partides que coincideixen:", partides_filtrades)

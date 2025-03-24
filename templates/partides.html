@@ -4,12 +4,14 @@
     <title>Partides</title>
 </head>
 <body>
-    <h1>Partides</h1>
+    <h1>Calendari de Partides</h1>
     <ul>
-        {% for partida in partides %}
-        <li>{{ partida[0] }} vs {{ partida[1] }}</li>
+        {% for partida in resultats %}
+            <li>{{ partida[0] }} vs {{ partida[1] }} - Guanyador: {{ partida[2] }}</li>
         {% endfor %}
     </ul>
-    <a href="/">Tornar a l'inici</a>
+    <a href="/puntuacions">Veure Rànquing</a>
+    <br>
+    <a href="{{ url_for('index') }}">Tornar a l'Inici</a>
 </body>
 </html>

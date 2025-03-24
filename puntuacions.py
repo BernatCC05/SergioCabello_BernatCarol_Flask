@@ -1,8 +1,5 @@
-def actualitzar_puntuacions(puntuacions, guanyador):
-    if guanyador in puntuacions:
-        puntuacions[guanyador] += 1
-    else:
-        puntuacions[guanyador] = 1
+def inicialitzar_puntuacions(participants):
+    return {participant: 0 for participant in participants}
 
-def calcular_ranquing(puntuacions):
+def generar_ranquing(puntuacions):
     return sorted(puntuacions.items(), key=lambda x: x[1], reverse=True)

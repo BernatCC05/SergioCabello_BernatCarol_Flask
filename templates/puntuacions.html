@@ -4,12 +4,14 @@
     <title>Puntuacions</title>
 </head>
 <body>
-    <h1>Puntuacions</h1>
-    <ul>
-        {% for jugador, punts in ranking %}
-        <li>{{ jugador }}: {{ punts }} punts</li>
+    <h1>Rànquing de Participants</h1>
+    <ol>
+        {% for participant, punts in ranquing %}
+            <li>{{ participant }}: {{ punts }} punts</li>
         {% endfor %}
-    </ul>
-    <a href="/">Tornar a l'inici</a>
+    </ol>
+    <a href="/partides">Tornar a Partides</a>
+    <br>
+    <a href="{{ url_for('index') }}">Tornar a l'Inici</a>
 </body>
 </html>

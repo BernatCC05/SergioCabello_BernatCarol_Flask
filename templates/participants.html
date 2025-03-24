@@ -4,16 +4,41 @@
     <title>Participants</title>
 </head>
 <body>
-    <h1>Participants</h1>
+    <h1>Gestió de Participants</h1>
+    
+    {% if error %}
+        <div style="color: red; margin-bottom: 15px;">
+            {{ error }}
+            {% if error == "Participant duplicat! Afegeix una inicial de cognom." %}
+                <form method="POST" style="margin-top: 10px;">
+                    <input type="text" name="nom" value="{{ request.form.nom }} {{ inicial }}" 
+                           placeholder="Ex: Pere L">
+                    <button type="submit">Confirmar amb inicial</button>
+                </form>
+            {% endif %}
+        </div>
+    {% endif %}
+
     <form method="POST">
         <input type="text" name="nom" placeholder="Nom del participant" required>
         <button type="submit">Afegir</button>
     </form>
-    <ul>
-        {% for participant in participants %}
-        <li>{{ participant }}</li>
-        {% endfor %}
-    </ul>
-    <a href="/">Tornar a l'inici</a>
+
+    <h2>Llista de Participants</h2>
+    {% if participants %}
+        <ul>
+            {% for participant in participants %}
+                <li>{{ participant }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Encara no hi ha participants registrats.</p>
+    {% endif %}
+
+    <form method="POST" action="{{ url_for('reset_participants') }}">
+        <button type="submit" style="margin-top: 20px; color: red;">Reset Participants</button>
+    </form>
+
+    <a href="{{ url_for('index') }}">Tornar a l'Inici</a>
 </body>
 </html>

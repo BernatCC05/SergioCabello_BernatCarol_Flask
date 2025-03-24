@@ -5,10 +5,14 @@
 </head>
 <body>
     <h1>Benvingut al Torneig d'Escacs</h1>
-    <ul>
-        <li><a href="/participants">Gestionar Participants</a></li>
-        <li><a href="/partides">Veure Partides</a></li>
-        <li><a href="/puntuacions">Veure Puntuacions</a></li>
-    </ul>
+    
+    <nav>
+        <ul>
+            <li><a href="{{ url_for('index') }}">Inici</a></li>
+            <li><a href="{{ url_for('gestionar_participants') }}">Participants</a></li>
+            <li><a href="{{ url_for('mostrar_partides') }}">Partides</a></li>
+            <li><a href="{{ url_for('mostrar_puntuacions') }}">Puntuacions</a></li>
+        </ul>
+    </nav>
 </body>
 </html>
