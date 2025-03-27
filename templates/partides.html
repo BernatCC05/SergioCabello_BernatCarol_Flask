@@ -5,11 +5,85 @@
 </head>
 <body>
     <h1>Calendari de Partides</h1>
-    <ul>
-        {% for partida in resultats %}
-            <li>{{ partida[0] }} vs {{ partida[1] }} - Guanyador: {{ partida[2] }}</li>
-        {% endfor %}
-    </ul>
+
+    {% if error %}
+        <div style="color: red; margin-bottom: 15px;">
+            {{ error }}
+        </div>
+    {% endif %}
+
+    {% if not tipus_competicio %}
+        <form method="POST" action="{{ url_for('mostrar_partides') }}">
+            <label for="tipus_competicio">Selecciona el tipus de competició:</label>
+            <select name="tipus_competicio" id="tipus_competicio" required>
+                <option value="lliga">Lliga</option>
+                <option value="eliminatories">Eliminatòries</option>
+            </select>
+            <button type="submit">Generar Partides</button>
+        </form>
+    {% else %}
+        {% if reiniciar_pregunta %}
+            <h2>La lliga ja està en curs</h2>
+            <p>Vols reiniciar la lliga des de zero?</p>
+            <form method="POST" action="{{ url_for('mostrar_partides') }}">
+                <input type="hidden" name="tipus_competicio" value="lliga">
+                <button type="submit" name="reiniciar_lliga" value="si">Sí, reiniciar</button>
+                <button type="submit" name="reiniciar_lliga" value="no">No, continuar</button>
+            </form>
+        {% elif tipus_competicio == "lliga" %}
+            <h2>Format: Lliga</h2>
+            {% if resultats %}
+                <h3>Jornada {{ jornada_actual }} de {{ total_jornades }}</h3>
+                <ul>
+                    {% for partida in resultats %}
+                        <li>{{ partida[0] }} vs {{ partida[1] }} - Guanyador: {{ partida[2] }}</li>
+                    {% endfor %}
+                </ul>
+                {% if jornada_actual < total_jornades %}
+                    <form method="POST" action="{{ url_for('mostrar_partides') }}">
+                        <input type="hidden" name="tipus_competicio" value="lliga">
+                        <button type="submit">Avançar a la següent jornada</button>
+                    </form>
+                {% else %}
+                    <p>La lliga ha finalitzat.</p>
+                {% endif %}
+            {% else %}
+                <p>No hi ha resultats per mostrar.</p>
+            {% endif %}
+        {% elif tipus_competicio == "eliminatories" %}
+            <h2>Format: Eliminatòries</h2>
+            {% if eliminatoria_cancelada %}
+                <p style="color: red;">L'eliminatòria s'ha cancel·lat.</p>
+            {% elif eliminatoria_finalitzada %}
+                <p style="color: green;">L'eliminatòria ha finalitzat. Felicitats al guanyador!</p>
+                <form method="POST" action="{{ url_for('mostrar_partides') }}">
+                    <input type="hidden" name="tipus_competicio" value="eliminatories">
+                    <button type="submit" name="reiniciar_eliminatoria" value="si">Reiniciar Eliminatòria</button>
+                </form>
+            {% else %}
+                {% if resultats %}
+                    <h3>Ronda {{ ronda_actual }} de {{ total_rondes }}</h3>
+                    <ul>
+                        {% for partida in resultats %}
+                            <li>{{ partida[0] }} vs {{ partida[1] }} - Guanyador: {{ partida[2] }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% if ronda_actual < total_rondes %}
+                        <form method="POST" action="{{ url_for('mostrar_partides') }}">
+                            <input type="hidden" name="tipus_competicio" value="eliminatories">
+                            <button type="submit" name="cancelar_eliminatoria" value="no">Avançar a la següent ronda</button>
+                            <button type="submit" name="cancelar_eliminatoria" value="si">Cancel·lar eliminatòria</button>
+                        </form>
+                    {% endif %}
+                {% else %}
+                    <p>No hi ha resultats per mostrar.</p>
+                {% endif %}
+            {% endif %}
+        {% else %}
+            <p>Error: Tipus de competició no especificat.</p>
+        {% endif %}
+    {% endif %}
+
     <a href="/puntuacions">Veure Rànquing</a>
     <br>
     <a href="{{ url_for('index') }}">Tornar a l'Inici</a>

@@ -5,5 +5,4 @@ diego
 pol
 roma
 hugo
-pepe
-bernat C
+narcis

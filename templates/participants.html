@@ -9,13 +9,12 @@
     {% if error %}
         <div style="color: red; margin-bottom: 15px;">
             {{ error }}
-            {% if error == "Participant duplicat! Afegeix una inicial de cognom." %}
-                <form method="POST" style="margin-top: 10px;">
-                    <input type="text" name="nom" value="{{ request.form.nom }} {{ inicial }}" 
-                           placeholder="Ex: Pere L">
-                    <button type="submit">Confirmar amb inicial</button>
-                </form>
-            {% endif %}
+        </div>
+    {% endif %}
+
+    {% if advertencia %}
+        <div style="color: orange; margin-bottom: 15px;">
+            {{ advertencia }}
         </div>
     {% endif %}
 
