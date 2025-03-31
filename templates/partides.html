@@ -84,7 +84,9 @@
         {% endif %}
     {% endif %}
 
-    <a href="/puntuacions">Veure Rànquing</a>
+    {% if tipus_competicio != "eliminatories" %}
+        <a href="/puntuacions">Veure Rànquing</a>
+    {% endif %}
     <br>
     <a href="{{ url_for('index') }}">Tornar a l'Inici</a>
 </body>

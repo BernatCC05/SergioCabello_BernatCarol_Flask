@@ -53,6 +53,7 @@ def mostrar_partides():
 
     if request.method == 'POST':
         tipus_competicio = request.form['tipus_competicio']
+        session['tipus_competicio'] = tipus_competicio  # Guardar el tipus_competicio en la sesión
 
         if tipus_competicio == "lliga":
             # Preguntar si se desea reiniciar la liga solo en la jornada 1 o si la liga ha finalizado
@@ -74,7 +75,7 @@ def mostrar_partides():
                 calendari_lliga = gpa.generar_calendari_lliga(participants)
                 session['calendari_lliga'] = calendari_lliga
                 session['jornada_actual'] = 0
-                session['puntuacions'] = gpa.inicialitzar_puntuacions(participants)  # Usar la función para inicializar puntuaciones
+                session['puntuacions'] = gpa.inicialitzar_puntuacions(participants, "lliga")  # Añadir "lliga"
 
             jornada_actual = session['jornada_actual']
             calendari_lliga = session['calendari_lliga']
@@ -115,7 +116,7 @@ def mostrar_partides():
                 calendari_eliminatories = gpa.generar_calendari_eliminatories(participants)
                 session['calendari_eliminatories'] = calendari_eliminatories
                 session['ronda_actual'] = 0
-                session['puntuacions'] = gpa.inicialitzar_puntuacions(participants)  # Inicializar puntuaciones
+                session['puntuacions'] = gpa.inicialitzar_puntuacions(participants, "eliminatories")  # Añadir "eliminatories"
 
             calendari_eliminatories = session['calendari_eliminatories']
             ronda_actual = session['ronda_actual']
@@ -150,17 +151,20 @@ def mostrar_partides():
 
 @app.route('/puntuacions')
 def mostrar_puntuacions():
-    puntuacions = session.get('puntuacions', {})
+    tipus_competicio = session.get('tipus_competicio', None)
+
+    if tipus_competicio == "eliminatories":
+        # Redirigir al inicio si se intenta acceder a puntuaciones desde eliminatorias
+        return redirect(url_for('index'))
     
-    # Verificar si és una eliminatòria (només conté "Guanyador")
-    if "Guanyador" in puntuacions:
-        guanyador = puntuacions["Guanyador"]
-        ranquing = [(guanyador, "Guanyador de l'Eliminatòria")]
-        return render_template('puntuacions.html', ranquing=ranquing, tipus_competicio="eliminatories")
+    elif tipus_competicio == "lliga":
+        puntuacions = session.get('puntuacions', {})
+        ranquing = punts.generar_ranquing(puntuacions, tipus_competicio)
+        return render_template('puntuacions.html', ranquing=ranquing, tipus_competicio="lliga")
     
-    # Si és una lliga, generar el rànquing
-    ranquing = punts.generar_ranquing(puntuacions)  # Usar la función de puntuacions.py
-    return render_template('puntuacions.html', ranquing=ranquing, tipus_competicio="lliga")
+    else:
+        error = "Tipus de competició desconegut."
+        return render_template('puntuacions.html', ranquing=[], tipus_competicio=None, error=error)
 
 @app.route('/reset_participants', methods=['POST'])
 def reset_participants():
