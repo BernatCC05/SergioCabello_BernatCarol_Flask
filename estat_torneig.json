@@ -1,0 +1,125 @@
+{
+    "participants": [
+        "bernat",
+        "sergio",
+        "diego",
+        "sandro",
+        "pol",
+        "roma"
+    ],
+    "puntuacions": {
+        "bernat": 4,
+        "diego": 1,
+        "pol": 4,
+        "roma": 3,
+        "sandro": 1,
+        "sergio": 2
+    },
+    "calendari_lliga": [
+        [
+            [
+                "bernat",
+                "roma"
+            ],
+            [
+                "sergio",
+                "pol"
+            ],
+            [
+                "diego",
+                "sandro"
+            ]
+        ],
+        [
+            [
+                "bernat",
+                "pol"
+            ],
+            [
+                "roma",
+                "sandro"
+            ],
+            [
+                "sergio",
+                "diego"
+            ]
+        ],
+        [
+            [
+                "bernat",
+                "sandro"
+            ],
+            [
+                "pol",
+                "diego"
+            ],
+            [
+                "roma",
+                "sergio"
+            ]
+        ],
+        [
+            [
+                "bernat",
+                "diego"
+            ],
+            [
+                "sandro",
+                "sergio"
+            ],
+            [
+                "pol",
+                "roma"
+            ]
+        ],
+        [
+            [
+                "bernat",
+                "sergio"
+            ],
+            [
+                "diego",
+                "roma"
+            ],
+            [
+                "sandro",
+                "pol"
+            ]
+        ]
+    ],
+    "jornada_actual": 5,
+    "calendari_eliminatories": [
+        [
+            [
+                "sandro",
+                "diego"
+            ],
+            [
+                "roma",
+                "sergio"
+            ],
+            [
+                "bernat",
+                "pol"
+            ]
+        ],
+        [
+            [
+                "diego",
+                "roma"
+            ],
+            [
+                "bernat",
+                "Descans"
+            ]
+        ],
+        [
+            [
+                "diego",
+                "bernat"
+            ]
+        ]
+    ],
+    "ronda_actual": 3,
+    "tipus_competicio": "lliga"
+}

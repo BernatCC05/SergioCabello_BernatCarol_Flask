@@ -66,6 +66,7 @@ torneig_escacs/
 │   ├── participants.html   # Formulari i vista de participants
 │   ├── partides.html       # Vista de partides i resultats
 │   ├── puntuacions.html    # Vista de puntuacions i rànquing
+|   ├── cercar.html         # Creat Nou per nosaltres - Bernat Carol i Sergio Cabello
 ├── app.py                  # Fitxer principal per arrencar l'aplicació
 ├── gestio_participants.py  # Mòdul per gestionar participants
 ├── gestio_partides.py      # Mòdul per gestionar partides

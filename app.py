@@ -132,6 +132,11 @@ def mostrar_partides():
                 resultats = gpa.simular_partides_jornada(jornada, puntuacions)
                 session['jornada_actual'] += 1
                 session['puntuacions'] = puntuacions
+            
+                # Preguntar si se desea guardar el estado del torneo
+                if 'guardar_torneig' in request.form and request.form['guardar_torneig'] == 'si':
+                    guardar_estat_torneig()
+            
                 return render_template('partides.html', 
                                        resultats=resultats, 
                                        tipus_competicio="lliga", 
@@ -168,12 +173,16 @@ def mostrar_partides():
                         guanyador = jugador1 if jugador2 == "Bye" else random.choice([jugador1, jugador2])
                         resultats.append((jugador1, jugador2, guanyador))
                     session['ronda_actual'] += 1
+                
+                    # Preguntar si se desea guardar el estado del torneo
+                    if 'guardar_torneig' in request.form and request.form['guardar_torneig'] == 'si':
+                        guardar_estat_torneig()
+                
                     return render_template('partides.html', 
                                            resultats=resultats, 
                                            tipus_competicio="eliminatories", 
                                            ronda_actual=ronda_actual + 1, 
-                                           total_rondes=len(calendari_eliminatories),
-                                           guardar_pregunta=True)
+                                           total_rondes=len(calendari_eliminatories))
 
             # Verificar si el usuario desea continuar con la siguiente ronda
             if 'cancelar_eliminatoria' in request.form and request.form['cancelar_eliminatoria'] == 'si':
@@ -242,6 +251,37 @@ def reset_participants():
     # Vaciar la lista de participants en el fitxer
     utils.guardar_fitxer('participants.txt', [])  # Guardar una lista vacía en el archivo
     return redirect(url_for('gestionar_participants'))
+
+@app.route('/cercar', methods=['GET', 'POST'])
+def cercar():
+    resultat_jugadors = []
+    resultat_partides = []
+    criteri = None
+
+    if request.method == 'POST':
+        criteri = request.form.get('criteri', '').strip().lower()
+        participants = gp.carregar_participants()
+        calendari_lliga = session.get('calendari_lliga', [])
+        calendari_eliminatories = session.get('calendari_eliminatories', [])
+
+        # Filtrar jugadors
+        resultat_jugadors = [p for p in participants if criteri in p.lower()]
+
+        # Filtrar partides (lliga i eliminatòries)
+        for jornada in calendari_lliga:
+            for partida in jornada:
+                if criteri in partida[0].lower() or criteri in partida[1].lower():
+                    resultat_partides.append(partida)
+
+        for ronda in calendari_eliminatories:
+            for partida in ronda:
+                if criteri in partida[0].lower() or criteri in partida[1].lower():
+                    resultat_partides.append(partida)
+
+    return render_template('cercar.html', 
+                           criteri=criteri, 
+                           resultat_jugadors=resultat_jugadors, 
+                           resultat_partides=resultat_partides)
 
 if __name__ == '__main__':
     app.run(debug=True)

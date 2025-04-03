@@ -11,8 +11,14 @@
             {{ error }}
         </div>
     {% endif %}
-
     {% if not tipus_competicio %}
+        {% if carregar_pregunta %}
+            <h2>Vols carregar un torneig guardat?</h2>
+            <form method="POST" action="{{ url_for('mostrar_partides') }}">
+                <button type="submit" name="carregar_torneig" value="si">Sí, carregar</button>
+                <button type="submit" name="carregar_torneig" value="no">No, començar de nou</button>
+            </form>
+        {% endif %}
         <form method="POST" action="{{ url_for('mostrar_partides') }}">
             <label for="tipus_competicio">Selecciona el tipus de competició:</label>
             <select name="tipus_competicio" id="tipus_competicio" required>
@@ -42,7 +48,9 @@
                 {% if jornada_actual < total_jornades %}
                     <form method="POST" action="{{ url_for('mostrar_partides') }}">
                         <input type="hidden" name="tipus_competicio" value="lliga">
-                        <button type="submit">Avançar a la següent jornada</button>
+                        <p>Vols guardar l'estat del torneig abans de continuar?</p>
+                        <button type="submit" name="guardar_torneig" value="si">Sí, guardar</button>
+                        <button type="submit" name="guardar_torneig" value="no">No, continuar</button>
                     </form>
                 {% else %}
                     <p>La lliga ha finalitzat.</p>
@@ -71,8 +79,9 @@
                     {% if ronda_actual < total_rondes %}
                         <form method="POST" action="{{ url_for('mostrar_partides') }}">
                             <input type="hidden" name="tipus_competicio" value="eliminatories">
-                            <button type="submit" name="cancelar_eliminatoria" value="no">Avançar a la següent ronda</button>
-                            <button type="submit" name="cancelar_eliminatoria" value="si">Cancel·lar eliminatòria</button>
+                            <p>Vols guardar l'estat del torneig abans de continuar?</p>
+                            <button type="submit" name="guardar_torneig" value="si">Sí, guardar</button>
+                            <button type="submit" name="guardar_torneig" value="no">No, continuar</button>
                         </form>
                     {% endif %}
                 {% else %}
@@ -83,10 +92,12 @@
             <p>Error: Tipus de competició no especificat.</p>
         {% endif %}
     {% endif %}
-    
+
     {% if tipus_competicio != "eliminatories" %}
         <a href="/puntuacions">Veure Rànquing</a>
     {% endif %}
+    <br>
+    <a href="{{ url_for('cercar') }}">Cercar Informació</a>
     <br>
     <a href="{{ url_for('index') }}">Tornar a l'Inici</a>
 </body>

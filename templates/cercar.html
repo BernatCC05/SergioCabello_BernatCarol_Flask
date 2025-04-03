@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cercar Informació</title>
+</head>
+<body>
+    <h1>Cercar Informació</h1>
+    <form method="POST" action="{{ url_for('cercar') }}">
+        <input type="text" name="criteri" placeholder="Nom del jugador o criteri" required>
+        <button type="submit">Cercar</button>
+    </form>
+
+    {% if criteri %}
+        <h2>Resultats per al criteri: "{{ criteri }}"</h2>
+
+        <h3>Jugadors</h3>
+        {% if resultat_jugadors %}
+            <ul>
+                {% for jugador in resultat_jugadors %}
+                    <li>{{ jugador }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No s'han trobat jugadors amb aquest criteri.</p>
+        {% endif %}
+
+        <h3>Partides</h3>
+        {% if resultat_partides %}
+            <ul>
+                {% for partida in resultat_partides %}
+                    <li>{{ partida[0] }} vs {{ partida[1] }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No s'han trobat partides amb aquest criteri.</p>
+        {% endif %}
+    {% endif %}
+    
+    <a href="{{ url_for('mostrar_partides') }}">Partides</a>
+    <br>
+    <a href="{{ url_for('index') }}">Tornar a l'Inici</a>
+</body>
+</html>
