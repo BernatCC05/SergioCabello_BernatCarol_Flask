@@ -1,5 +1,6 @@
 import os 
 import re
+import json
 
 def guardar_fitxer(nom_fitxer, dades):
     with open(nom_fitxer, 'w', encoding='utf-8') as f:
@@ -15,3 +16,5 @@ def carregar_fitxer(nom_fitxer):
 def validar_nom_participant(nom):
     pattern = r'^[A-Za-zÀ-ÖØ-öø-ÿ]+( [A-Za-zÀ-ÖØ-öø-ÿ]+)*$'
     return re.fullmatch(pattern, nom.strip()) is not None
+
+
