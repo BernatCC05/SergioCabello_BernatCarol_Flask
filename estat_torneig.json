@@ -8,12 +8,12 @@
         "roma"
     ],
     "puntuacions": {
-        "bernat": 4,
+        "bernat": 1,
         "diego": 1,
-        "pol": 4,
-        "roma": 3,
-        "sandro": 1,
-        "sergio": 2
+        "pol": 1,
+        "roma": 0,
+        "sandro": 2,
+        "sergio": 1
     },
     "calendari_lliga": [
         [
@@ -87,7 +87,7 @@
             ]
         ]
     ],
-    "jornada_actual": 5,
+    "jornada_actual": 2,
     "calendari_eliminatories": [
         [
             [
@@ -106,17 +106,17 @@
         [
             [
                 "diego",
-                "roma"
+                "sergio"
             ],
             [
-                "bernat",
+                "pol",
                 "Descans"
             ]
         ],
         [
             [
                 "diego",
-                "bernat"
+                "pol"
             ]
         ]
     ],

@@ -28,13 +28,20 @@ def carregar_estat_torneig():
     if os.path.exists('estat_torneig.json'):
         with open('estat_torneig.json', 'r', encoding='utf-8') as f:
             estat = json.load(f)
-        session['puntuacions'] = estat.get('puntuacions', {})
-        session['calendari_lliga'] = estat.get('calendari_lliga', [])
-        session['jornada_actual'] = estat.get('jornada_actual', 0)
-        session['calendari_eliminatories'] = estat.get('calendari_eliminatories', [])
-        session['ronda_actual'] = estat.get('ronda_actual', 0)
-        session['tipus_competicio'] = estat.get('tipus_competicio', None)
-        return estat.get('tipus_competicio', None)
+        
+        # Sobreescribir participantes (no añadir)
+        utils.guardar_fitxer('participants.txt', estat['participants'])  # <-- Clave
+        
+        # Cargar todo en la sesión
+        session.clear()  # Limpiar sesión previa
+        session['puntuacions'] = estat['puntuacions']
+        session['calendari_lliga'] = estat['calendari_lliga']
+        session['jornada_actual'] = estat['jornada_actual']
+        session['calendari_eliminatories'] = estat['calendari_eliminatories']
+        session['ronda_actual'] = estat['ronda_actual']
+        session['tipus_competicio'] = estat['tipus_competicio']
+        
+        return estat['tipus_competicio']
     return None
 
 # Routes principals
